@@ -2,12 +2,88 @@
 
 ## 1. Install the Package
 
-```bash
-# Editable install (local development)
-pip install -e /path/to/trading_report_generator
+The package lives at
+[github.com/rontechvision/Trading-Report-Generator](https://github.com/rontechvision/Trading-Report-Generator).
+Pick one of the paths below depending on whether you want the `trading-report`
+CLI and `skills.report_generator` module available everywhere on your
+machine, or scoped to a single project's virtual environment.
 
-# Or from a Git repo
-pip install git+https://github.com/yourusername/trading_report_generator.git
+### Option A — Global install (available in every project / any shell)
+
+Use this if you want the `trading-report` CLI on your `PATH` system-wide,
+independent of any project's virtualenv.
+
+**Recommended: [pipx](https://pipx.pypa.io/)** (isolates the package in its
+own environment, only exposes the CLI entry point):
+
+```bash
+pipx install git+https://github.com/rontechvision/Trading-Report-Generator.git
+```
+
+**Alternative: pip with `--user`** (installs into your user site-packages,
+also exposes the `skills.report_generator` module for `import` from any
+script run with your global Python):
+
+```bash
+pip install --user git+https://github.com/rontechvision/Trading-Report-Generator.git
+```
+
+Verify either install:
+
+```bash
+trading-report --version
+```
+
+To upgrade later, re-run the same command with `--force` (pipx) or
+`--upgrade` (pip):
+
+```bash
+pipx install --force git+https://github.com/rontechvision/Trading-Report-Generator.git
+# or
+pip install --user --upgrade git+https://github.com/rontechvision/Trading-Report-Generator.git
+```
+
+### Option B — Project-specific install (scoped to one project's venv)
+
+Use this if a specific project depends on `trading-report-generator` and you
+want the version pinned/isolated per-project (recommended for reproducible
+builds).
+
+1. Activate that project's virtual environment:
+   ```bash
+   # from the target project's root
+   python -m venv .venv
+   .venv\Scripts\activate        # Windows
+   source .venv/bin/activate     # macOS/Linux
+   ```
+2. Install straight from GitHub:
+   ```bash
+   pip install git+https://github.com/rontechvision/Trading-Report-Generator.git
+   ```
+3. Or pin to a branch, tag, or commit for reproducibility:
+   ```bash
+   pip install git+https://github.com/rontechvision/Trading-Report-Generator.git@master
+   pip install git+https://github.com/rontechvision/Trading-Report-Generator.git@v0.1.0
+   pip install git+https://github.com/rontechvision/Trading-Report-Generator.git@<commit-sha>
+   ```
+4. Or add it to that project's `requirements.txt` so it installs with the
+   rest of the project's dependencies:
+   ```
+   trading-report-generator @ git+https://github.com/rontechvision/Trading-Report-Generator.git@master
+   ```
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+### Option C — Editable install (contributing to this repo)
+
+Clone the repo and install it in editable mode so local edits take effect
+immediately without reinstalling:
+
+```bash
+git clone https://github.com/rontechvision/Trading-Report-Generator.git
+cd Trading-Report-Generator
+pip install -e .
 ```
 
 ## 2. Configure Figma Credentials

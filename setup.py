@@ -3,7 +3,7 @@ Setup configuration for trading_report_generator package.
 
 Allows installation via:
   pip install -e .
-  pip install git+https://github.com/yourusername/trading_report_generator.git
+  pip install git+https://github.com/rontechvision/Trading-Report-Generator.git
 """
 
 from setuptools import setup, find_packages
@@ -20,8 +20,8 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="Trading Bot Claude",
-    author_email="your-email@example.com",
-    url="https://github.com/yourusername/trading-report-generator",
+    author_email="rontechvision@gmail.com",
+    url="https://github.com/rontechvision/Trading-Report-Generator",
     license="MIT",
     
     # Package discovery

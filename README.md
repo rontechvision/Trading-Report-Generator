@@ -10,9 +10,24 @@ Telegram, no auto-trading, no data connectors.
 ## Quick Start
 
 1. **Install the package**
+
+   From a local clone:
    ```bash
    pip install -e /path/to/trading_report_generator
    ```
+
+   Or straight from GitHub — globally (via `pipx`) or into a specific
+   project's virtualenv (via `pip`):
+   ```bash
+   # Global CLI, available in every shell
+   pipx install git+https://github.com/rontechvision/Trading-Report-Generator.git
+
+   # Project-specific, inside that project's venv
+   pip install git+https://github.com/rontechvision/Trading-Report-Generator.git
+   ```
+   **See [INSTALLATION.md](INSTALLATION.md#1-install-the-package)** for the
+   full breakdown of global vs. project-specific installs, version pinning,
+   and upgrading.
 
 2. **Create `.env` with your Figma credentials**
    ```bash
