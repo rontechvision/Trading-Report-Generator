@@ -1,0 +1,94 @@
+{
+  "strategy_name": "MTF Supertrend + HARSI",
+  "symbol": "BTC/USDT",
+  "timeframe": "30M entry / 4H direction",
+  "period": "2026-01-01 → 2026-06-26",
+  "generated_at": "2026-06-26",
+  "parameters": "ST(10,5.0) · HARSI(14) · TP 1.0R · BE@0.3R · chandelier 0.7×ATR22",
+  "account": {
+    "initial_capital": 1000,
+    "risk_per_trade": 50,
+    "leverage": 10,
+    "commission": "0.05%/side"
+  },
+  "metrics": {
+    "total_return_pct": 40.7,
+    "sharpe": 1.76,
+    "max_drawdown_pct": -14.6,
+    "win_rate_pct": 53.9,
+    "profit_factor": 1.92,
+    "total_trades": 76,
+    "winning_trades": 41,
+    "losing_trades": 35
+  },
+  "prices": {
+    "timestamps": ["2026-01-01T00:00:00Z", "2026-01-01T00:30:00Z"],
+    "opens": [41000.0, 41050.0],
+    "highs": [41100.0, 41150.0],
+    "lows": [41000.0, 41050.0],
+    "closes": [41050.0, 41100.0]
+  },
+  "indicators": {
+    "supertrend_up": [null, 41000.0],
+    "supertrend_down": [null, null],
+    "harsi": [50.0, 51.5]
+  },
+  "trades": [
+    {
+      "id": 1,
+      "direction": "long",
+      "entry_time": "2026-01-04T23:00:00Z",
+      "exit_time": "2026-01-05T00:30:00Z",
+      "entry_price": 91372.55,
+      "exit_price": 92405.46,
+      "leverage": 5.01,
+      "bars": 3,
+      "return_pct": 5.48,
+      "r_multiple": 0.85,
+      "pnl_usd": 54.82,
+      "cum_pnl": 54.82
+    },
+    {
+      "id": 2,
+      "direction": "long",
+      "entry_time": "2026-01-06T06:30:00Z",
+      "exit_time": "2026-01-06T13:00:00Z",
+      "entry_price": 93780.01,
+      "exit_price": 93729.88,
+      "leverage": 3.73,
+      "bars": 13,
+      "return_pct": -0.41,
+      "r_multiple": -0.08,
+      "pnl_usd": -4.28,
+      "cum_pnl": 50.53
+    },
+    {
+      "id": 3,
+      "direction": "short",
+      "entry_time": "2026-02-13T07:30:00Z",
+      "exit_time": "2026-02-13T15:00:00Z",
+      "entry_price": 66208.96,
+      "exit_price": 68895.88,
+      "leverage": 1.98,
+      "bars": 15,
+      "return_pct": -7.79,
+      "r_multiple": -1.65,
+      "pnl_usd": -81.16,
+      "cum_pnl": -14.57
+    },
+    {
+      "id": 4,
+      "direction": "long",
+      "entry_time": "2026-03-15T10:00:00Z",
+      "exit_time": "2026-03-15T14:00:00Z",
+      "entry_price": 70500.00,
+      "exit_price": 71200.00,
+      "leverage": 2.5,
+      "bars": 8,
+      "return_pct": 4.2,
+      "r_multiple": 0.84,
+      "pnl_usd": 48.95,
+      "cum_pnl": 34.38
+    }
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "colors": {
+    "background": "#131722",
+    "surface": "#1a1d24",
+    "border": "#262a33",
+    "text_primary": "#d1d4dc",
+    "text_secondary": "#9aa0a8",
+    "text_tertiary": "#787b86",
+    "success": "#26a269",
+    "error": "#e0564b",
+    "long": "#6cb6ff",
+    "short": "#ffa657",
+    "highlight": "#ffd166",
+    "up": "#26a69a",
+    "down": "#ef5350"
+  },
+  "typography": {
+    "font_family": "-apple-system, Segoe UI, Roboto, Arial, sans-serif",
+    "heading_1": { "size": "21px", "weight": 700 },
+    "heading_2": { "size": "15px", "weight": 700 },
+    "body": { "size": "13px", "weight": 400 },
+    "small": { "size": "11px", "weight": 400 },
+    "tiny": { "size": "10px", "weight": 400 }
+  },
+  "spacing": {
+    "xs": "2px",
+    "sm": "6px",
+    "md": "10px",
+    "lg": "14px",
+    "xl": "18px",
+    "xxl": "24px"
+  },
+  "layout": {
+    "max_width": "1240px",
+    "border_radius": "8px",
+    "card_padding": "8px 12px"
+  }
+}

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/>
+<title>{{ symbol }} — {{ strategy }}</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+<style>
+ body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#131722;color:#d1d4dc}
+ .wrap{max-width:1240px;margin:0 auto;padding:18px}
+ h1{font-size:21px;margin:0 0 2px}
+ .sub{color:#9aa0a8;font-size:13px;margin:2px 0}
+ .cards{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
+ .card{background:#1a1d24;border:1px solid #262a33;border-radius:8px;padding:8px 12px;min-width:104px}
+ .card .k{color:#9aa0a8;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+ .card .v{font-size:17px;font-weight:600;margin-top:2px}
+ #ohlcbar{font-size:13px;line-height:1.5;padding:8px 6px 4px;min-height:36px}
+ #ohlcbar .tf{color:#787b86;margin:0 8px 0 5px}
+ #ohlcbar .lbl{color:#787b86;margin:0 3px 0 11px}
+ #ohlcbar .st{color:#787b86;margin-right:6px}
+ #chart{height:560px;background:#131722;border:1px solid #262a33;border-radius:8px}
+ .hint{color:#9aa0a8;font-size:12px;margin:8px 2px}
+ .tablewrap{max-height:430px;overflow:auto;margin-top:6px;border:1px solid #262a33;border-radius:8px}
+ table{border-collapse:collapse;width:100%;font-size:13px}
+ th,td{padding:6px 10px;text-align:right;white-space:nowrap}
+ th{position:sticky;top:0;background:#1a1d24;color:#9aa0a8;font-weight:600;border-bottom:1px solid #262a33}
+ td.t,th.t,td.d,th.d{text-align:left}
+ tbody tr{cursor:pointer;border-bottom:1px solid #1c2026}
+ tbody tr:hover{background:#1a1d24}
+ tbody tr.active{background:#243044}
+ .pos{color:#26a269}.neg{color:#e0564b}.long{color:#6cb6ff}.short{color:#ffa657}
+ h2{font-size:15px;margin:18px 2px 6px;color:#d1d4dc}
+ .tablepick{display:flex;align-items:center;gap:8px;margin:14px 2px 0;font-size:13px;color:#9aa0a8}
+ .tablepick select{background:#1a1d24;color:#d1d4dc;border:1px solid #262a33;border-radius:6px;padding:5px 8px;font-size:13px}
+ .tblsection{display:block}
+ .tblsection.hidden{display:none}
+</style></head><body><div class="wrap">
+ <h1>{{ strategy }}</h1>
+ <div class="sub">{{ symbol }} · {{ timeframe }} · {{ period }}</div>
+ <div class="sub">{{ parameters }}</div>
+ <div class="cards"><div class="card"><div class="k">Total return</div><div class="v">{{ "+" if metrics.total_return_pct >= 0 else "" }}{{ "%.1f" | format(metrics.total_return_pct) }}%</div></div><div class="card"><div class="k">Sharpe</div><div class="v">{{ "%.2f" | format(metrics.sharpe) }}</div></div><div class="card"><div class="k">Max DD</div><div class="v">{{ "%.1f" | format(metrics.max_drawdown_pct) }}%</div></div><div class="card"><div class="k">Win rate</div><div class="v">{{ "%.1f" | format(metrics.win_rate_pct) }}%</div></div><div class="card"><div class="k">Profit factor</div><div class="v">{{ "%.2f" | format(metrics.profit_factor) }}</div></div><div class="card"><div class="k">Trades</div><div class="v">{{ metrics.total_trades }}</div></div></div>
+ <div id="ohlcbar"></div>
+ <div id="chart"></div>
+ <div class="hint">Click any trade row to mark its entry/exit on the chart and zoom in. Double-click the chart to reset.</div>
+ <div class="tablepick">
+  <label for="tableSel">Show table:</label>
+  <select id="tableSel" onchange="switchTable(this.value)">
+   <option value="trades">List of Trades</option>
+   <option value="losses">Top 10 losses (this period)</option>
+  </select>
+ </div>
+ <div id="tbl-trades" class="tblsection">
+  <h2>List of Trades</h2>
+  <div class="tablewrap"><table><thead><tr>
+   <th>#</th><th class="d">Dir</th><th class="t">Entry (UTC)</th><th class="t">Exit (UTC)</th>
+   <th>Entry</th><th>Exit</th><th>Lev</th><th>Bars</th><th>Return %</th><th>R</th><th>P&L $</th><th>Cum $</th>
+  </tr></thead><tbody>
+  {%- for trade in trades %}
+  <tr data-i="{{ loop.index0 }}">
+   <td>{{ trade.id }}</td>
+   <td class="d {% if trade.direction == 'long' %}long{% else %}short{% endif %}">{{ trade.direction }}</td>
+   <td class="t">{{ trade.entry_time }}</td>
+   <td class="t">{{ trade.exit_time }}</td>
+   <td>{{ "{:,.2f}".format(trade.entry_price) }}</td>
+   <td>{{ "{:,.2f}".format(trade.exit_price) }}</td>
+   <td>{{ "%.2f" | format(trade.leverage) }}x</td>
+   <td>{{ trade.bars }}</td>
+   <td class="{% if trade.return_pct >= 0 %}pos{% else %}neg{% endif %}">{{ "+" if trade.return_pct >= 0 else "" }}{{ "%.2f" | format(trade.return_pct) }}</td>
+   <td class="{% if trade.r_multiple >= 0 %}pos{% else %}neg{% endif %}">{{ "+" if trade.r_multiple >= 0 else "" }}{{ "%.2f" | format(trade.r_multiple) }}</td>
+   <td class="{% if trade.pnl_usd >= 0 %}pos{% else %}neg{% endif %}">{{ "+" if trade.pnl_usd >= 0 else "" }}{{ "%.2f" | format(trade.pnl_usd) }}</td>
+   <td>{{ "+" if trade.cum_pnl >= 0 else "" }}{{ "%.2f" | format(trade.cum_pnl) }}</td>
+  </tr>
+  {%- endfor %}
+  </tbody></table></div>
+ </div>
+ <div id="tbl-losses" class="tblsection hidden">
+  <h2>Top 10 losses (this period)</h2>
+  <div class="tablewrap"><table><thead><tr>
+   <th>#</th><th class="d">Dir</th><th class="t">Entry (UTC)</th><th class="t">Exit (UTC)</th>
+   <th>Entry</th><th>Exit</th><th>Lev</th><th>Bars</th><th>Return %</th><th>R</th><th>P&L $</th><th>Cum $</th>
+  </tr></thead><tbody>
+  {%- for trade in losing_trades_sorted %}
+  <tr data-i="{{ trade.id - 1 }}">
+   <td>{{ trade.id }}</td>
+   <td class="d {% if trade.direction == 'long' %}long{% else %}short{% endif %}">{{ trade.direction }}</td>
+   <td class="t">{{ trade.entry_time }}</td>
+   <td class="t">{{ trade.exit_time }}</td>
+   <td>{{ "{:,.2f}".format(trade.entry_price) }}</td>
+   <td>{{ "{:,.2f}".format(trade.exit_price) }}</td>
+   <td>{{ "%.2f" | format(trade.leverage) }}x</td>
+   <td>{{ trade.bars }}</td>
+   <td class="neg">{{ "%.2f" | format(trade.return_pct) }}</td>
+   <td class="neg">{{ "%.2f" | format(trade.r_multiple) }}</td>
+   <td class="neg">{{ "%.2f" | format(trade.pnl_usd) }}</td>
+   <td>{{ "%.2f" | format(trade.cum_pnl) }}</td>
+  </tr>
+  {%- endfor %}
+  </tbody></table></div>
+ </div>
+</div><script>
+var SYM='{{ symbol }}';
+// Placeholder: Replace with actual chart data
+var PRICE={t:[],o:[],h:[],l:[],c:[]};
+var ST_UP=[], ST_DN=[], HTF_STUP=[], HTF_STDN=[];
+var VOL={v:[],c:[]};
+var HARSI={o:[],h:[],l:[],c:[]};
+var EQUITY={t:[],e:[]};
+var TRADES=[
+  {%- for trade in trades %}
+  {id:{{ trade.id }},dir:'{{ trade.direction }}',entry_time:'{{ trade.entry_time }}',exit_time:'{{ trade.exit_time }}',entry_px:{{ trade.entry_price }},exit_px:{{ trade.exit_price }},pnl:{{ trade.pnl_usd }}},
+  {%- endfor %}
+];
+
+function switchTable(val){
+ document.getElementById('tbl-trades').classList.toggle('hidden',val!=='trades');
+ document.getElementById('tbl-losses').classList.toggle('hidden',val!=='losses');
+}
+
+// Chart placeholder - Plotly will be initialized here when data available
+console.log('Report initialized for',SYM,'with',TRADES.length,'trades');
+</script>
+</body></html>
