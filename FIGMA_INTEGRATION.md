@@ -30,7 +30,7 @@ report.html.jinja2 (uses tokens in CSS)
 ### 2. Figma Credentials
 ```
 FIGMA_TOKEN: figd_Nwcum...yUFT (your personal token)
-FIGMA_FILE_ID: 5qTgjz00GA5tSNaV9nKCqM (community design file)
+FIGMA_FILE_ID: 6eCCUGFL617dFcuxuAKlG8 (Free Financial Components — Light/Dark, community copy)
 ```
 
 ### 3. Files Created
@@ -87,12 +87,15 @@ Guides new users through configuration.
 
 ## Current Design Tokens
 
-### Colors (13 tokens)
-- Primary: background, surface, border
+### Colors (15 tokens)
+- Primary: background (`#181b21`), surface (`#2a2d34`), border (`#57595f`)
 - Text: primary, secondary, tertiary
 - Status: success, error
 - Trading: long (buy), short (sell)
-- Highlight: neutral grays and accents
+- Chart: up (`#366aef`) / down (`#f1364e`) candle colors, grid
+  (`rgba(255,255,255,0.08)`) — pulled from the Figma `chart` component
+  (node `2:8023`) in the file above
+- Highlight, accent
 
 ### Typography (6 definitions)
 - heading_1: 21px, weight 700
@@ -100,7 +103,8 @@ Guides new users through configuration.
 - body: 13px, weight 400
 - small: 11px, weight 400
 - tiny: 10px, weight 400
-- Plus font-family (system fonts)
+- font-family: `'Plus Jakarta Display', ...` (from the Figma chart's text
+  nodes, falls back to system fonts)
 
 ### Spacing (6 values)
 - xs: 2px, sm: 6px, md: 10px
@@ -142,17 +146,23 @@ self.env.globals.update(self.tokens)
 ## Advanced Usage
 
 ### Extract Specific Figma Components
-For full component extraction (colors, typography from Figma styles):
+`FigmaConnector.extract_colors` is still a stub — it scans component names
+but never reads their fills. To pull real colors today, fetch the node
+directly and read `fills`/`strokes` off each child (this is how the chart
+palette in `design_tokens.json` was populated, from node `2:8023`):
 
 ```python
 from mcp.figma_connector import FigmaConnector
 
 connector = FigmaConnector()
-file_data = connector.get_file()
+node_data = connector.get_file_nodes(["2:8023"])  # node id from the Figma URL
 
-# Extract from components
-colors = connector.extract_colors(file_data)
+# walk node_data["nodes"]["2:8023"]["document"]["children"], reading
+# node["fills"][i]["color"] (SOLID fills) for each named element
 ```
+
+Making `extract_colors` do this walk generically (and running it through
+`figma_cli.py fetch`) is still open — see CLAUDE.md's Remaining Work.
 
 ### Custom Token Extraction
 Extend `TokensValidator` to extract from:
@@ -243,7 +253,8 @@ python -m skills.report_generator.skill
 
 ---
 
-**Status**: Figma integration complete ✅  
-**Connected to**: Free Financial Components Light & Dark (Community)  
+**Status**: Figma integration complete ✅ (manual node extraction; automated
+`extract_colors` still a stub)  
+**Connected to**: Free Financial Components — Light/Dark (community copy)  
 **Tokens Validated**: ✓ Yes  
-**Last Check**: 2026-07-11 06:45 UTC
+**Last Check**: 2026-07-13

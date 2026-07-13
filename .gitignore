@@ -57,3 +57,4 @@ output/
 
 # Generated reports (root-level; templates live under skills/*/templates/*.jinja2)
 /*.html
+test/

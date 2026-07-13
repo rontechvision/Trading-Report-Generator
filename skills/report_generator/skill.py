@@ -90,7 +90,7 @@ class ReportGenerator:
         
         # Save if output path provided
         if output_path:
-            Path(output_path).write_text(html_content)
+            Path(output_path).write_text(html_content, encoding="utf-8")
             self.logger.info(f"✓ Report saved to {output_path}")
         
         return html_content
@@ -196,14 +196,14 @@ def main():
     print("✅ VERIFICATION")
     print("="*60)
     
+    colors = gen.tokens.get("colors", {})
     checks = {
-        "background color": "#131722" in html,
-        "surface color": "#1a1d24" in html,
-        "success color": "#26a269" in html,
-        "error color": "#e0564b" in html,
+        "background color": colors.get("background") in html,
+        "surface color": colors.get("surface") in html,
+        "success color": colors.get("success") in html,
+        "error color": colors.get("error") in html,
         "typography": "font-family" in html,
         "spacing": "padding" in html or "margin" in html,
-        "design tokens as CSS variables": "var(--" in html or gen.tokens.get("colors", {}).get("background") in html,
     }
     
     for check_name, passed in checks.items():

@@ -3,32 +3,32 @@
 <title>{{ symbol }} — {{ strategy }}</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
- body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#131722;color:#d1d4dc}
- .wrap{max-width:1240px;margin:0 auto;padding:18px}
- h1{font-size:21px;margin:0 0 2px}
- .sub{color:#9aa0a8;font-size:13px;margin:2px 0}
- .cards{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0}
- .card{background:#1a1d24;border:1px solid #262a33;border-radius:8px;padding:8px 12px;min-width:104px}
- .card .k{color:#9aa0a8;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+ body{font-family:{{ typography.font_family }};margin:0;background:{{ colors.background }};color:{{ colors.text_primary }}}
+ .wrap{max-width:{{ layout.max_width }};margin:0 auto;padding:{{ spacing.xl }}}
+ h1{font-size:{{ typography.heading_1.size }};margin:0 0 2px}
+ .sub{color:{{ colors.text_secondary }};font-size:{{ typography.body.size }};margin:2px 0}
+ .cards{display:flex;flex-wrap:wrap;gap:{{ spacing.md }};margin:{{ spacing.lg }} 0}
+ .card{background:{{ colors.surface }};border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }};padding:{{ layout.card_padding }};min-width:104px}
+ .card .k{color:{{ colors.text_secondary }};font-size:{{ typography.small.size }};text-transform:uppercase;letter-spacing:.04em}
  .card .v{font-size:17px;font-weight:600;margin-top:2px}
- #ohlcbar{font-size:13px;line-height:1.5;padding:8px 6px 4px;min-height:36px}
- #ohlcbar .tf{color:#787b86;margin:0 8px 0 5px}
- #ohlcbar .lbl{color:#787b86;margin:0 3px 0 11px}
- #ohlcbar .st{color:#787b86;margin-right:6px}
- #chart{height:560px;background:#131722;border:1px solid #262a33;border-radius:8px}
- .hint{color:#9aa0a8;font-size:12px;margin:8px 2px}
- .tablewrap{max-height:430px;overflow:auto;margin-top:6px;border:1px solid #262a33;border-radius:8px}
- table{border-collapse:collapse;width:100%;font-size:13px}
+ #ohlcbar{font-size:{{ typography.body.size }};line-height:1.5;padding:8px 6px 4px;min-height:36px}
+ #ohlcbar .tf{color:{{ colors.text_tertiary }};margin:0 8px 0 5px}
+ #ohlcbar .lbl{color:{{ colors.text_tertiary }};margin:0 3px 0 11px}
+ #ohlcbar .st{color:{{ colors.text_tertiary }};margin-right:6px}
+ #chart{height:560px;background:{{ colors.background }};border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }}}
+ .hint{color:{{ colors.text_secondary }};font-size:{{ typography.small.size }};margin:8px 2px}
+ .tablewrap{max-height:430px;overflow:auto;margin-top:6px;border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }}}
+ table{border-collapse:collapse;width:100%;font-size:{{ typography.body.size }}}
  th,td{padding:6px 10px;text-align:right;white-space:nowrap}
- th{position:sticky;top:0;background:#1a1d24;color:#9aa0a8;font-weight:600;border-bottom:1px solid #262a33}
+ th{position:sticky;top:0;background:{{ colors.surface }};color:{{ colors.text_secondary }};font-weight:600;border-bottom:1px solid {{ colors.border }}}
  td.t,th.t,td.d,th.d{text-align:left}
- tbody tr{cursor:pointer;border-bottom:1px solid #1c2026}
- tbody tr:hover{background:#1a1d24}
+ tbody tr{cursor:pointer;border-bottom:1px solid {{ colors.border }}}
+ tbody tr:hover{background:{{ colors.surface }}}
  tbody tr.active{background:#243044}
- .pos{color:#26a269}.neg{color:#e0564b}.long{color:#6cb6ff}.short{color:#ffa657}
- h2{font-size:15px;margin:18px 2px 6px;color:#d1d4dc}
- .tablepick{display:flex;align-items:center;gap:8px;margin:14px 2px 0;font-size:13px;color:#9aa0a8}
- .tablepick select{background:#1a1d24;color:#d1d4dc;border:1px solid #262a33;border-radius:6px;padding:5px 8px;font-size:13px}
+ .pos{color:{{ colors.success }}}.neg{color:{{ colors.error }}}.long{color:{{ colors.long }}}.short{color:{{ colors.short }}}
+ h2{font-size:{{ typography.heading_2.size }};margin:18px 2px 6px;color:{{ colors.text_primary }}}
+ .tablepick{display:flex;align-items:center;gap:8px;margin:14px 2px 0;font-size:{{ typography.body.size }};color:{{ colors.text_secondary }}}
+ .tablepick select{background:{{ colors.surface }};color:{{ colors.text_primary }};border:1px solid {{ colors.border }};border-radius:6px;padding:5px 8px;font-size:{{ typography.body.size }}}
  .tblsection{display:block}
  .tblsection.hidden{display:none}
 </style></head><body><div class="wrap">
@@ -96,24 +96,155 @@
  </div>
 </div><script>
 var SYM='{{ symbol }}';
-// Placeholder: Replace with actual chart data
-var PRICE={t:[],o:[],h:[],l:[],c:[]};
-var ST_UP=[], ST_DN=[], HTF_STUP=[], HTF_STDN=[];
-var VOL={v:[],c:[]};
-var HARSI={o:[],h:[],l:[],c:[]};
-var EQUITY={t:[],e:[]};
+var COLORS={{ colors | tojson }};
+var INITIAL_CAPITAL={{ (account.initial_capital or 0) if account else 0 }};
+// OHLC price series + indicators, when the caller supplies data.prices / data.indicators
+// (see sample_data.json). Falls back to an equity-curve-only chart when prices is empty.
+var RAWP={{ (prices or {}) | tojson }};
+var PRICE={t:RAWP.timestamps||[],o:RAWP.opens||[],h:RAWP.highs||[],l:RAWP.lows||[],c:RAWP.closes||[]};
+var RAWI={{ (indicators or {}) | tojson }};
+var ST_UP=RAWI.supertrend_up||[], ST_DN=RAWI.supertrend_down||[], HARSI_LINE=RAWI.harsi||[];
 var TRADES=[
   {%- for trade in trades %}
-  {id:{{ trade.id }},dir:'{{ trade.direction }}',entry_time:'{{ trade.entry_time }}',exit_time:'{{ trade.exit_time }}',entry_px:{{ trade.entry_price }},exit_px:{{ trade.exit_price }},pnl:{{ trade.pnl_usd }}},
+  {id:{{ trade.id }},dir:'{{ trade.direction }}',entry_time:'{{ trade.entry_time }}',exit_time:'{{ trade.exit_time }}',entry_px:{{ trade.entry_price }},exit_px:{{ trade.exit_price }},pnl:{{ trade.pnl_usd }},cum_pnl:{{ trade.cum_pnl }}},
   {%- endfor %}
 ];
+(function(){ // entry/exit equity per trade, used as y-values when there's no price series
+ var eq=INITIAL_CAPITAL;
+ TRADES.forEach(function(t){ t.entry_eq=eq; t.exit_eq=INITIAL_CAPITAL+t.cum_pnl; eq=t.exit_eq; });
+})();
 
 function switchTable(val){
  document.getElementById('tbl-trades').classList.toggle('hidden',val!=='trades');
  document.getElementById('tbl-losses').classList.toggle('hidden',val!=='losses');
 }
 
-// Chart placeholder - Plotly will be initialized here when data available
+var hasPrice=PRICE.t.length>0;
+var hasHarsi=hasPrice && HARSI_LINE.length>0;
+var HI; // trace index of the "Selected" highlight trace, set in renderChart()
+var gd=document.getElementById('chart');
+
+function renderChart(){
+ var leX=[],leY=[],seX=[],seY=[],exX=[],exY=[],exC=[];
+ TRADES.forEach(function(d){
+  var ey=hasPrice?d.entry_px:d.entry_eq, xy=hasPrice?d.exit_px:d.exit_eq;
+  if(d.dir==='long'){leX.push(d.entry_time);leY.push(ey);}else{seX.push(d.entry_time);seY.push(ey);}
+  exX.push(d.exit_time);exY.push(xy);exC.push(d.pnl>=0?COLORS.success:COLORS.error);
+ });
+
+ var traces=[];
+ if(hasPrice){
+  traces.push({x:PRICE.t,open:PRICE.o,high:PRICE.h,low:PRICE.l,close:PRICE.c,type:'candlestick',name:SYM,yaxis:'y',
+   increasing:{line:{color:COLORS.up},fillcolor:COLORS.up},decreasing:{line:{color:COLORS.down},fillcolor:COLORS.down},hoverinfo:'none'});
+  if(ST_UP.length) traces.push({x:PRICE.t,y:ST_UP,type:'scatter',mode:'lines',name:'Supertrend ↑',yaxis:'y',connectgaps:false,line:{color:COLORS.up,width:1.2},hoverinfo:'skip'});
+  if(ST_DN.length) traces.push({x:PRICE.t,y:ST_DN,type:'scatter',mode:'lines',name:'Supertrend ↓',yaxis:'y',connectgaps:false,line:{color:COLORS.down,width:1.2},hoverinfo:'skip'});
+ } else {
+  traces.push({x:TRADES.map(function(t){return t.exit_time}),y:TRADES.map(function(t){return t.exit_eq}),
+   type:'scatter',mode:'lines',name:'Equity',yaxis:'y',line:{color:COLORS.accent,width:1.5},hoverinfo:'x+y'});
+ }
+ traces.push({x:leX,y:leY,type:'scatter',mode:'markers',name:'Long entry',yaxis:'y',marker:{symbol:'triangle-up',size:9,color:COLORS.long,line:{color:COLORS.background,width:1}},hoverinfo:'skip'});
+ traces.push({x:seX,y:seY,type:'scatter',mode:'markers',name:'Short entry',yaxis:'y',marker:{symbol:'triangle-down',size:9,color:COLORS.short,line:{color:COLORS.background,width:1}},hoverinfo:'skip'});
+ traces.push({x:exX,y:exY,type:'scatter',mode:'markers',name:'Exit',yaxis:'y',marker:{symbol:'x',size:7,color:exC},hoverinfo:'skip'});
+ HI=traces.length;
+ traces.push({x:[],y:[],type:'scatter',mode:'lines+markers',name:'Selected',yaxis:'y',line:{width:2,color:COLORS.highlight},marker:{size:14,color:COLORS.highlight},hoverinfo:'skip'});
+ if(hasPrice){
+  traces.push({x:TRADES.map(function(t){return t.exit_time}),y:TRADES.map(function(t){return t.exit_eq}),
+   type:'scatter',mode:'lines',name:'Equity $',yaxis:'y2',visible:'legendonly',line:{color:COLORS.text_tertiary,width:1,dash:'dot'}});
+ }
+ if(hasHarsi){
+  traces.push({x:PRICE.t,y:HARSI_LINE,type:'scatter',mode:'lines',name:'HARSI',yaxis:'y3',line:{color:'#c084fc',width:1.2},hoverinfo:'skip'});
+ }
+
+ var layout={
+  paper_bgcolor:COLORS.background,plot_bgcolor:COLORS.background,font:{color:COLORS.text_secondary,size:11},
+  margin:{l:12,r:hasPrice?72:56,t:6,b:22},hovermode:'x',dragmode:'pan',showlegend:false,
+  xaxis:{domain:[0,1],anchor:hasHarsi?'y3':'y',gridcolor:COLORS.grid,rangeslider:{visible:false},
+   showspikes:true,spikemode:'across',spikethickness:1,spikecolor:COLORS.text_tertiary,spikedash:'dot'},
+  yaxis:{domain:hasHarsi?[0.32,1]:[0,1],side:'right',gridcolor:COLORS.grid,zeroline:false,
+   showspikes:true,spikethickness:1,spikecolor:COLORS.text_tertiary,spikedash:'dot'}
+ };
+ if(hasPrice){
+  layout.yaxis2={overlaying:'y',side:'left',showgrid:false,zeroline:false,visible:false};
+  var lastC=PRICE.c[PRICE.c.length-1], prevC=PRICE.c[PRICE.c.length-2]!=null?PRICE.c[PRICE.c.length-2]:lastC;
+  var tagCol=lastC>=prevC?COLORS.up:COLORS.down;
+  layout.annotations=[{xref:'paper',yref:'y',x:1,xanchor:'left',y:lastC,yanchor:'middle',
+   text:' '+lastC.toLocaleString()+' ',showarrow:false,font:{color:COLORS.text_primary,size:11},bgcolor:tagCol,bordercolor:tagCol}];
+  layout.shapes=[{type:'line',xref:'paper',x0:0,x1:1,yref:'y',y0:lastC,y1:lastC,line:{color:tagCol,width:1,dash:'dot'}}];
+ }
+ if(hasHarsi){
+  layout.yaxis3={domain:[0,0.24],side:'right',anchor:'x',gridcolor:COLORS.grid,zeroline:true,zerolinecolor:COLORS.border};
+ }
+ Plotly.newPlot('chart',traces,layout,{responsive:true,displaylogo:false,scrollZoom:true,modeBarButtonsToRemove:['select2d','lasso2d']});
+
+ function fitY(){
+  var xr=gd.layout.xaxis.range; if(!xr)return;
+  var x0=new Date(xr[0]).getTime(), x1=new Date(xr[1]).getTime(), up={};
+  if(hasPrice){
+   var lo=Infinity,hi=-Infinity,hlo=Infinity,hhi=-Infinity;
+   for(var i=0;i<PRICE.t.length;i++){
+    var tt=new Date(PRICE.t[i]).getTime(); if(tt<x0||tt>x1)continue;
+    if(PRICE.l[i]<lo)lo=PRICE.l[i]; if(PRICE.h[i]>hi)hi=PRICE.h[i];
+    if(hasHarsi){var hv=HARSI_LINE[i]; if(hv!=null){if(hv<hlo)hlo=hv; if(hv>hhi)hhi=hv;}}
+   }
+   if(isFinite(lo)&&lo<hi){var pad=(hi-lo)*0.08; up['yaxis.range']=[lo-pad,hi+pad];}
+   if(hasHarsi&&isFinite(hlo)&&hlo<hhi){var hp=(hhi-hlo)*0.12; up['yaxis3.range']=[hlo-hp,hhi+hp];}
+  } else {
+   var elo=Infinity,ehi=-Infinity;
+   TRADES.forEach(function(t){
+    var tt=new Date(t.exit_time).getTime(); if(tt<x0||tt>x1)return;
+    if(t.exit_eq<elo)elo=t.exit_eq; if(t.exit_eq>ehi)ehi=t.exit_eq;
+   });
+   if(isFinite(elo)&&elo<ehi){var epad=(ehi-elo)*0.1; up['yaxis.range']=[elo-epad,ehi+epad];}
+  }
+  if(Object.keys(up).length) Plotly.relayout(gd,up);
+ }
+ gd.on('plotly_relayout',function(ev){
+  if(('xaxis.range[0]' in ev)||('xaxis.range' in ev)||('xaxis.autorange' in ev)||('autosize' in ev)) fitY();
+ });
+ setTimeout(fitY,60);
+
+ var bar=document.getElementById('ohlcbar');
+ var fmt=function(n){return (n==null||!isFinite(n))?'-':n.toLocaleString(undefined,{maximumFractionDigits:2})};
+ if(hasPrice){
+  var showBar=function(i){
+   var o=PRICE.o[i],h=PRICE.h[i],l=PRICE.l[i],c=PRICE.c[i];
+   var up=c>=o, col=up?COLORS.up:COLORS.down, chg=c-o, cp=o?chg/o*100:0, sg=chg>=0?'+':'';
+   var stv=ST_UP[i]!=null?ST_UP[i]:ST_DN[i];
+   bar.innerHTML='<b>'+SYM+'</b>'
+    +'<span class="lbl">O</span><span style="color:'+col+'">'+fmt(o)+'</span>'
+    +'<span class="lbl">H</span><span style="color:'+col+'">'+fmt(h)+'</span>'
+    +'<span class="lbl">L</span><span style="color:'+col+'">'+fmt(l)+'</span>'
+    +'<span class="lbl">C</span><span style="color:'+col+'">'+fmt(c)+'</span>'
+    +'<span style="color:'+col+'">  '+sg+fmt(chg)+' ('+sg+cp.toFixed(2)+'%)</span>'
+    +(stv!=null?'<br><span class="st">Supertrend</span><span>'+fmt(stv)+'</span>':'');
+  };
+  gd.on('plotly_hover',function(ev){
+   for(var k=0;k<ev.points.length;k++){if(ev.points[k].data.type==='candlestick'){showBar(ev.points[k].pointNumber);return;}}
+  });
+  if(PRICE.t.length) showBar(PRICE.t.length-1);
+ } else if(bar && TRADES.length){
+  var eqVals=TRADES.map(function(t){return t.exit_eq});
+  var startEq=INITIAL_CAPITAL, endEq=eqVals[eqVals.length-1], peakEq=Math.max(INITIAL_CAPITAL,Math.max.apply(null,eqVals));
+  bar.innerHTML='<span class="lbl">Equity</span><span class="st">start</span>'+fmt(startEq)+
+   '<span class="lbl">end</span>'+fmt(endEq)+'<span class="lbl">peak</span>'+fmt(peakEq);
+ }
+}
+
+function sel(i,rowEl){
+ var d=TRADES[i]; if(!d)return;
+ var c=d.dir==='long'?COLORS.long:COLORS.short;
+ var ey=hasPrice?d.entry_px:d.entry_eq, xy=hasPrice?d.exit_px:d.exit_eq;
+ Plotly.restyle(gd,{x:[[d.entry_time,d.exit_time]],y:[[ey,xy]],'line.color':c,'marker.color':c},[HI]);
+ var a=new Date(d.entry_time).getTime(), b=new Date(d.exit_time).getTime(), pad=Math.max((b-a)*2,6*3600*1000);
+ Plotly.relayout(gd,{'xaxis.range':[new Date(a-pad).toISOString(),new Date(b+pad).toISOString()]});
+ document.querySelectorAll('tr.active').forEach(function(r){r.classList.remove('active');});
+ if(rowEl)rowEl.classList.add('active');
+}
+document.querySelectorAll('tr[data-i]').forEach(function(r){
+ r.addEventListener('click',function(){sel(+r.dataset.i,r);});
+});
+
+renderChart();
 console.log('Report initialized for',SYM,'with',TRADES.length,'trades');
 </script>
 </body></html>

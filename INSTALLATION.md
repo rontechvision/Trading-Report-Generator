@@ -159,13 +159,34 @@ trading-report --version
       "pnl_usd": 700,
       "cum_pnl": 700
     }
-  ]
+  ],
+  "account": {
+    "initial_capital": 1000
+  },
+  "prices": {
+    "timestamps": ["2026-06-27T09:00:00Z", "2026-06-27T09:30:00Z"],
+    "opens": [62100.0], "highs": [62550.0], "lows": [62050.0], "closes": [62500.0]
+  },
+  "indicators": {
+    "supertrend_up": [62000.0, null],
+    "supertrend_down": [null, null],
+    "harsi": [55.2, 58.9]
+  }
 }
 ```
 
 `ReportGenerator._normalize_metrics` accepts either decimal (`0.5`) or
 percentage (`50`) forms for `total_return`, `max_drawdown`, and `win_rate`,
 and maps `sharpe_ratio` → `sharpe`.
+
+`prices`/`indicators`/`account` are optional and drive the candlestick
+chart. Each array in `prices` must be the same length, one entry per bar.
+`indicators.supertrend_up`/`supertrend_down` overlay the price chart (use
+`null` where the line isn't active); `indicators.harsi` renders as a
+sub-panel oscillator. Omit `prices` entirely and the chart falls back to an
+equity curve built from `trades[].cum_pnl` and `account.initial_capital`.
+Clicking a trade row in the report zooms the chart to that trade's
+entry/exit and highlights it, either way.
 
 ## Troubleshooting
 

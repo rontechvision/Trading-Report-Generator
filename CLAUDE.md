@@ -6,9 +6,6 @@ backtest data (JSON) into a styled HTML report, using design tokens (colors,
 typography, spacing) pulled from a Figma file.
 
 **Scope**: This project does one thing — Figma-styled HTML report generation.
-It is not a trading bot, MCP orchestration platform, or alerting system.
-Telegram, auto-trading, strategy analysis, and backtesting belong in other
-projects (e.g. `TradingBotClaude`), not here.
 
 **Tech Stack**: Python, Jinja2, Figma REST API
 
@@ -68,10 +65,17 @@ metrics/trades into a styled HTML report, and exposes both a Python API
 (`ReportGenerator`) and a CLI (`trading-report`).
 
 ## Remaining Work
-- [ ] Extract design tokens directly from Figma component/style nodes
-      (`FigmaConnector.extract_colors` is currently a stub — see
-      `mcp/figma_connector.py`)
-- [ ] Add a chart (equity curve / price) to the report template
+- [ ] Automate design token extraction from Figma component/style nodes
+      (`FigmaConnector.extract_colors` is still a stub — see
+      `mcp/figma_connector.py`). The current chart palette in
+      `design_tokens.json` (background/up/down/grid/text/font) was pulled
+      from the Figma `chart` component (node `2:8023`) via a one-off script,
+      not through `extract_colors`/`figma_cli.py fetch` — those still need
+      real node-walking logic before this is repeatable.
+- [x] Add a chart (candlestick price + equity-curve fallback) to the report
+      template, with click-a-trade-row-to-zoom/highlight. Colors are pulled
+      from `design_tokens.json` (see `colors.up`/`colors.down`/`colors.grid`
+      etc. in the template's `<script>` block), not hardcoded.
 - [ ] Broaden test coverage beyond `test_skill.py`
 
 ## Token Optimization Strategy
