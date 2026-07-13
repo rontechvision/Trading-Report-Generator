@@ -16,6 +16,23 @@
     "up": "#366aef",
     "down": "#f1364e"
   },
+  "colors_light": {
+    "background": "#ffffff",
+    "surface": "#f9fafc",
+    "border": "#e1e6ee",
+    "grid": "rgba(213,221,231,0.35)",
+    "text_primary": "#2d5587",
+    "text_secondary": "#99acc4",
+    "text_tertiary": "#99acc4",
+    "success": "#26a269",
+    "error": "#e0564b",
+    "long": "#6cb6ff",
+    "short": "#ffa657",
+    "highlight": "#ffd166",
+    "accent": "#2b87ff",
+    "up": "#366aef",
+    "down": "#f1364e"
+  },
   "typography": {
     "font_family": "'Plus Jakarta Display', -apple-system, Segoe UI, Roboto, Arial, sans-serif",
     "heading_1": { "size": "21px", "weight": 700 },

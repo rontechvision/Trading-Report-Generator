@@ -3,38 +3,60 @@
 <title>{{ symbol }} — {{ strategy }}</title>
 <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
 <style>
- body{font-family:{{ typography.font_family }};margin:0;background:{{ colors.background }};color:{{ colors.text_primary }}}
+ :root{
+  --bg:{{ colors.background }};--surface:{{ colors.surface }};--border:{{ colors.border }};--grid:{{ colors.grid }};
+  --text-primary:{{ colors.text_primary }};--text-secondary:{{ colors.text_secondary }};--text-tertiary:{{ colors.text_tertiary }};
+  --success:{{ colors.success }};--error:{{ colors.error }};--long:{{ colors.long }};--short:{{ colors.short }};
+  --highlight:{{ colors.highlight }};--accent:{{ colors.accent }};--up:{{ colors.up }};--down:{{ colors.down }};
+  --row-active:#243044;
+ }
+ :root[data-theme="light"]{
+  --bg:{{ colors_light.background }};--surface:{{ colors_light.surface }};--border:{{ colors_light.border }};--grid:{{ colors_light.grid }};
+  --text-primary:{{ colors_light.text_primary }};--text-secondary:{{ colors_light.text_secondary }};--text-tertiary:{{ colors_light.text_tertiary }};
+  --success:{{ colors_light.success }};--error:{{ colors_light.error }};--long:{{ colors_light.long }};--short:{{ colors_light.short }};
+  --highlight:{{ colors_light.highlight }};--accent:{{ colors_light.accent }};--up:{{ colors_light.up }};--down:{{ colors_light.down }};
+  --row-active:#dce8fb;
+ }
+ body{font-family:{{ typography.font_family }};margin:0;background:var(--bg);color:var(--text-primary)}
  .wrap{max-width:{{ layout.max_width }};margin:0 auto;padding:{{ spacing.xl }}}
+ .topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
  h1{font-size:{{ typography.heading_1.size }};margin:0 0 2px}
- .sub{color:{{ colors.text_secondary }};font-size:{{ typography.body.size }};margin:2px 0}
+ .sub{color:var(--text-secondary);font-size:{{ typography.body.size }};margin:2px 0}
+ .theme-toggle{background:var(--surface);border:1px solid var(--border);color:var(--text-primary);border-radius:{{ layout.border_radius }};width:32px;height:32px;font-size:15px;cursor:pointer;line-height:1;flex:none}
+ .theme-toggle:hover{opacity:.85}
  .cards{display:flex;flex-wrap:wrap;gap:{{ spacing.md }};margin:{{ spacing.lg }} 0}
- .card{background:{{ colors.surface }};border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }};padding:{{ layout.card_padding }};min-width:104px}
- .card .k{color:{{ colors.text_secondary }};font-size:{{ typography.small.size }};text-transform:uppercase;letter-spacing:.04em}
+ .card{background:var(--surface);border:1px solid var(--border);border-radius:{{ layout.border_radius }};padding:{{ layout.card_padding }};min-width:104px}
+ .card .k{color:var(--text-secondary);font-size:{{ typography.small.size }};text-transform:uppercase;letter-spacing:.04em}
  .card .v{font-size:17px;font-weight:600;margin-top:2px}
  #ohlcbar{font-size:{{ typography.body.size }};line-height:1.5;padding:8px 6px 4px;min-height:36px}
- #ohlcbar .tf{color:{{ colors.text_tertiary }};margin:0 8px 0 5px}
- #ohlcbar .lbl{color:{{ colors.text_tertiary }};margin:0 3px 0 11px}
- #ohlcbar .st{color:{{ colors.text_tertiary }};margin-right:6px}
- #chart{height:560px;background:{{ colors.background }};border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }}}
- .hint{color:{{ colors.text_secondary }};font-size:{{ typography.small.size }};margin:8px 2px}
- .tablewrap{max-height:430px;overflow:auto;margin-top:6px;border:1px solid {{ colors.border }};border-radius:{{ layout.border_radius }}}
+ #ohlcbar .tf{color:var(--text-tertiary);margin:0 8px 0 5px}
+ #ohlcbar .lbl{color:var(--text-tertiary);margin:0 3px 0 11px}
+ #ohlcbar .st{color:var(--text-tertiary);margin-right:6px}
+ #chart{height:560px;background:var(--bg);border:1px solid var(--border);border-radius:{{ layout.border_radius }}}
+ .hint{color:var(--text-secondary);font-size:{{ typography.small.size }};margin:8px 2px}
+ .tablewrap{max-height:430px;overflow:auto;margin-top:6px;border:1px solid var(--border);border-radius:{{ layout.border_radius }}}
  table{border-collapse:collapse;width:100%;font-size:{{ typography.body.size }}}
  th,td{padding:6px 10px;text-align:right;white-space:nowrap}
- th{position:sticky;top:0;background:{{ colors.surface }};color:{{ colors.text_secondary }};font-weight:600;border-bottom:1px solid {{ colors.border }}}
+ th{position:sticky;top:0;background:var(--surface);color:var(--text-secondary);font-weight:600;border-bottom:1px solid var(--border)}
  td.t,th.t,td.d,th.d{text-align:left}
- tbody tr{cursor:pointer;border-bottom:1px solid {{ colors.border }}}
- tbody tr:hover{background:{{ colors.surface }}}
- tbody tr.active{background:#243044}
- .pos{color:{{ colors.success }}}.neg{color:{{ colors.error }}}.long{color:{{ colors.long }}}.short{color:{{ colors.short }}}
- h2{font-size:{{ typography.heading_2.size }};margin:18px 2px 6px;color:{{ colors.text_primary }}}
- .tablepick{display:flex;align-items:center;gap:8px;margin:14px 2px 0;font-size:{{ typography.body.size }};color:{{ colors.text_secondary }}}
- .tablepick select{background:{{ colors.surface }};color:{{ colors.text_primary }};border:1px solid {{ colors.border }};border-radius:6px;padding:5px 8px;font-size:{{ typography.body.size }}}
+ tbody tr{cursor:pointer;border-bottom:1px solid var(--border)}
+ tbody tr:hover{background:var(--surface)}
+ tbody tr.active{background:var(--row-active)}
+ .pos{color:var(--success)}.neg{color:var(--error)}.long{color:var(--long)}.short{color:var(--short)}
+ h2{font-size:{{ typography.heading_2.size }};margin:18px 2px 6px;color:var(--text-primary)}
+ .tablepick{display:flex;align-items:center;gap:8px;margin:14px 2px 0;font-size:{{ typography.body.size }};color:var(--text-secondary)}
+ .tablepick select{background:var(--surface);color:var(--text-primary);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:{{ typography.body.size }}}
  .tblsection{display:block}
  .tblsection.hidden{display:none}
 </style></head><body><div class="wrap">
- <h1>{{ strategy }}</h1>
- <div class="sub">{{ symbol }} · {{ timeframe }} · {{ period }}</div>
- <div class="sub">{{ parameters }}</div>
+ <div class="topbar">
+  <div>
+   <h1>{{ strategy }}</h1>
+   <div class="sub">{{ symbol }} · {{ timeframe }} · {{ period }}</div>
+   <div class="sub">{{ parameters }}</div>
+  </div>
+  <button id="themeToggle" class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">🌙</button>
+ </div>
  <div class="cards"><div class="card"><div class="k">Total return</div><div class="v">{{ "+" if metrics.total_return_pct >= 0 else "" }}{{ "%.1f" | format(metrics.total_return_pct) }}%</div></div><div class="card"><div class="k">Sharpe</div><div class="v">{{ "%.2f" | format(metrics.sharpe) }}</div></div><div class="card"><div class="k">Max DD</div><div class="v">{{ "%.1f" | format(metrics.max_drawdown_pct) }}%</div></div><div class="card"><div class="k">Win rate</div><div class="v">{{ "%.1f" | format(metrics.win_rate_pct) }}%</div></div><div class="card"><div class="k">Profit factor</div><div class="v">{{ "%.2f" | format(metrics.profit_factor) }}</div></div><div class="card"><div class="k">Trades</div><div class="v">{{ metrics.total_trades }}</div></div></div>
  <div id="ohlcbar"></div>
  <div id="chart"></div>
@@ -96,7 +118,9 @@
  </div>
 </div><script>
 var SYM='{{ symbol }}';
-var COLORS={{ colors | tojson }};
+var COLORS_DARK={{ colors | tojson }};
+var COLORS_LIGHT={{ colors_light | tojson }};
+var COLORS=COLORS_DARK;
 var INITIAL_CAPITAL={{ (account.initial_capital or 0) if account else 0 }};
 // OHLC price series + indicators, when the caller supplies data.prices / data.indicators
 // (see sample_data.json). Falls back to an equity-curve-only chart when prices is empty.
@@ -123,6 +147,20 @@ var hasPrice=PRICE.t.length>0;
 var hasHarsi=hasPrice && HARSI_LINE.length>0;
 var HI; // trace index of the "Selected" highlight trace, set in renderChart()
 var gd=document.getElementById('chart');
+var INITIAL_BARS=150; // how many of the most-recent bars/trades to show on first render
+
+function applyTheme(theme){
+ document.documentElement.setAttribute('data-theme',theme);
+ COLORS=theme==='light'?COLORS_LIGHT:COLORS_DARK;
+ var btn=document.getElementById('themeToggle');
+ if(btn)btn.textContent=theme==='light'?'🌙':'☀️';
+ try{localStorage.setItem('trg-theme',theme);}catch(e){}
+ renderChart();
+}
+function toggleTheme(){
+ var cur=document.documentElement.getAttribute('data-theme')||'dark';
+ applyTheme(cur==='light'?'dark':'light');
+}
 
 function renderChart(){
  var leX=[],leY=[],seX=[],seY=[],exX=[],exY=[],exC=[];
@@ -173,6 +211,16 @@ function renderChart(){
  }
  if(hasHarsi){
   layout.yaxis3={domain:[0,0.24],side:'right',anchor:'x',gridcolor:COLORS.grid,zeroline:true,zerolinecolor:COLORS.border};
+ }
+ // Zoom to the most recent INITIAL_BARS bars (or trades, in the equity fallback) on first render.
+ var initX=hasPrice?PRICE.t:TRADES.map(function(t){return t.exit_time});
+ if(initX.length){
+  var startIdx=Math.max(0,initX.length-INITIAL_BARS);
+  layout.xaxis.range=[initX[startIdx],initX[initX.length-1]];
+ }
+ if(typeof gd.removeAllListeners==='function'){
+  gd.removeAllListeners('plotly_hover');
+  gd.removeAllListeners('plotly_relayout');
  }
  Plotly.newPlot('chart',traces,layout,{responsive:true,displaylogo:false,scrollZoom:true,modeBarButtonsToRemove:['select2d','lasso2d']});
 
@@ -244,7 +292,9 @@ document.querySelectorAll('tr[data-i]').forEach(function(r){
  r.addEventListener('click',function(){sel(+r.dataset.i,r);});
 });
 
-renderChart();
+var savedTheme='dark';
+try{savedTheme=localStorage.getItem('trg-theme')||'dark';}catch(e){}
+applyTheme(savedTheme);
 console.log('Report initialized for',SYM,'with',TRADES.length,'trades');
 </script>
 </body></html>

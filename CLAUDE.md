@@ -75,7 +75,14 @@ metrics/trades into a styled HTML report, and exposes both a Python API
 - [x] Add a chart (candlestick price + equity-curve fallback) to the report
       template, with click-a-trade-row-to-zoom/highlight. Colors are pulled
       from `design_tokens.json` (see `colors.up`/`colors.down`/`colors.grid`
-      etc. in the template's `<script>` block), not hardcoded.
+      etc. in the template's `<script>` block), not hardcoded. Opens zoomed
+      to the most recent 150 bars/trades (`INITIAL_BARS` in the template).
+- [x] Light mode. `design_tokens.json` has a `colors_light` palette (from
+      the Figma light-mode `chart` component, node `2:6654`); the template
+      renders both as CSS custom properties (`:root` / `:root[data-theme]`)
+      and a `COLORS_DARK`/`COLORS_LIGHT` pair for the Plotly chart, toggled
+      client-side via the 🌙/☀️ button (`toggleTheme()`), no server round
+      trip.
 - [ ] Broaden test coverage beyond `test_skill.py`
 
 ## Token Optimization Strategy

@@ -87,15 +87,22 @@ Guides new users through configuration.
 
 ## Current Design Tokens
 
-### Colors (15 tokens)
-- Primary: background (`#181b21`), surface (`#2a2d34`), border (`#57595f`)
-- Text: primary, secondary, tertiary
-- Status: success, error
-- Trading: long (buy), short (sell)
-- Chart: up (`#366aef`) / down (`#f1364e`) candle colors, grid
-  (`rgba(255,255,255,0.08)`) — pulled from the Figma `chart` component
-  (node `2:8023`) in the file above
-- Highlight, accent
+### Colors — dark (`colors`, 15 tokens) + light (`colors_light`, mirrored)
+- Dark palette from the Figma `chart` component under "Dark Mode 🌚" →
+  "Components --- Dark" (node `2:8023`): background `#181b21`, surface
+  `#2a2d34`, border `#57595f`, up `#366aef` / down `#f1364e` candles, grid
+  `rgba(255,255,255,0.08)`.
+- Light palette from the sibling `chart` component under "LIght Mode 🌞" →
+  "Components --- Light" (node `2:6654`): background `#ffffff`, surface
+  `#f9fafc`, border `#e1e6ee`, same up/down candle colors, grid
+  `rgba(213,221,231,0.35)`, text `#2d5587`/`#99acc4`.
+- Both palettes ship in every report; `report.html.jinja2` renders them as
+  CSS custom properties (`:root` / `:root[data-theme="light"]`) plus a
+  `COLORS_DARK`/`COLORS_LIGHT` JS pair for the Plotly chart, and a
+  client-side button (`toggleTheme()`) switches between them — no
+  regeneration needed.
+- Also: text (primary/secondary/tertiary), status (success/error), trading
+  (long/short), highlight, accent.
 
 ### Typography (6 definitions)
 - heading_1: 21px, weight 700
@@ -149,13 +156,14 @@ self.env.globals.update(self.tokens)
 `FigmaConnector.extract_colors` is still a stub — it scans component names
 but never reads their fills. To pull real colors today, fetch the node
 directly and read `fills`/`strokes` off each child (this is how the chart
-palette in `design_tokens.json` was populated, from node `2:8023`):
+palettes in `design_tokens.json` were populated — dark from node `2:8023`,
+light from the sibling node `2:6654`):
 
 ```python
 from mcp.figma_connector import FigmaConnector
 
 connector = FigmaConnector()
-node_data = connector.get_file_nodes(["2:8023"])  # node id from the Figma URL
+node_data = connector.get_file_nodes(["2:8023"])  # or "2:6654" for the light variant
 
 # walk node_data["nodes"]["2:8023"]["document"]["children"], reading
 # node["fills"][i]["color"] (SOLID fills) for each named element
